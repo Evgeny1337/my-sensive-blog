@@ -51,11 +51,8 @@ def index(request):
 
 
 def post_detail(request, slug):
-    try:
-        post = Post.objects.annotate(likes_count=Count('likes')).get(slug=slug)
-    except Post.DoesNotExist:
-        return Http404('Post does not exist')
-
+    posts = Post.objects.annotate(likes_count=Count('likes'))
+    post = get_object_or_404(posts,slug=slug)
     comments = post.comments.prefetch_related('author').all()
     serialized_comments = []
     for comment in comments:
